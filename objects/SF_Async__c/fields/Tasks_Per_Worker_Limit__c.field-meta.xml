@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tasks_Per_Worker_Limit__c</fullName>
+    <description>Maximum tasks of this record type to process per worker run. When null, uses Async_Framework_Configuration__mdt.Tasks_Per_Worker_Default__c.</description>
+    <externalId>false</externalId>
+    <label>Tasks Per Worker Limit</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

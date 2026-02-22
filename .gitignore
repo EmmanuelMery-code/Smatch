@@ -1,0 +1,15 @@
+# Salesforce
+.sfdx/
+local/
+*.log
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
