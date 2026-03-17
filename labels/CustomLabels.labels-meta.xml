@@ -22,6 +22,13 @@
         <value>Back to main menu</value>
     </labels>
     <labels>
+        <fullName>Smatch_Choice_DailyCalculationOption</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Daily calculation option</shortDescription>
+        <value>Daily calculation option</value>
+    </labels>
+    <labels>
         <fullName>Smatch_Choice_ConfirmDelete</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -160,6 +167,13 @@
         <protected>false</protected>
         <shortDescription>Stop Schedulers</shortDescription>
         <value>Stop Schedulers</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StatisticOption</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic option</shortDescription>
+        <value>Statistic option</value>
     </labels>
     <labels>
         <fullName>Smatch_Choice_StopStatistic</fullName>
@@ -344,6 +358,13 @@
         <value>Choose in Parameter</value>
     </labels>
     <labels>
+        <fullName>Smatch_Screen_CleanupSubMenu</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Cleanup submenu screen</shortDescription>
+        <value>Cleanup submenu</value>
+    </labels>
+    <labels>
         <fullName>Smatch_Screen_CleanupStatusLabel</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -412,6 +433,13 @@
         <protected>false</protected>
         <shortDescription>Select frequency</shortDescription>
         <value>Select frequency</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_StatisticSubMenu</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic submenu screen</shortDescription>
+        <value>Statistic submenu</value>
     </labels>
     <labels>
         <fullName>Smatch_Screen_StatisticStatusLabel</fullName>
