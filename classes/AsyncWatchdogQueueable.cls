@@ -63,7 +63,7 @@ public with sharing class AsyncWatchdogQueueable implements Queueable {
 
         if (!(Test.isRunningTest() && testForcePublishWakeUp)) {
             if (!scheduledWorkerRuns.isEmpty()) {
-                System.debug('AsyncWatchdogQueueable: Worker already scheduled for ' + scheduledWorkerRuns[0].NextFireTime + '. Skipping WAKEUP.');
+                // System.debug('AsyncWatchdogQueueable: Worker already scheduled for ' + scheduledWorkerRuns[0].NextFireTime + '. Skipping WAKEUP.');
                 return;
             }
         }

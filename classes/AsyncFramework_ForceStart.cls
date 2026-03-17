@@ -122,9 +122,9 @@ public with sharing class AsyncFramework_ForceStart {
         if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) return;
         try {
             System.enqueueJob(new AsyncWorkerQueueable());
-            System.debug('AsyncFramework_ForceStart.ensureWorkerRunning: Worker enqueued.');
+            // System.debug('AsyncFramework_ForceStart.ensureWorkerRunning: Worker enqueued.');
         } catch (Exception e) {
-            System.debug('AsyncFramework_ForceStart.ensureWorkerRunning failed: ' + e.getMessage());
+            // System.debug('AsyncFramework_ForceStart.ensureWorkerRunning failed: ' + e.getMessage());
         }
     }
 

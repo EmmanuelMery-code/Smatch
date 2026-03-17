@@ -5,7 +5,7 @@ trigger AsyncWakeUpTrigger on Async_WakeUp__e (after insert) {
     Integer parallelWorkersToSpawn = 0;
 
     for (Async_WakeUp__e evt : Trigger.New) {
-        System.debug('TRIGGER WAKEUP - Type reçu : ' + evt.Event_Type__c);
+        // System.debug('TRIGGER WAKEUP - Type reçu : ' + evt.Event_Type__c);
 
         if (evt.Event_Type__c == 'PARALLEL_WORKERS') {
             Integer requested = (evt.Batch_Size__c != null && evt.Batch_Size__c >= 1) ? evt.Batch_Size__c.intValue() : 0;
@@ -33,7 +33,7 @@ trigger AsyncWakeUpTrigger on Async_WakeUp__e (after insert) {
             Integer targetWorkers = Math.min(Math.max(1, workersCount) * 2, maxWorkers);
             rtc.Active_Worker_Count__c = targetWorkers;
             upsert rtc;
-            System.debug('AsyncWakeUpTrigger: Max_Batch_Size reduced to ' + newSize + ', workers=' + workersCount + ', target=' + targetWorkers);
+            // System.debug('AsyncWakeUpTrigger: Max_Batch_Size reduced to ' + newSize + ', workers=' + workersCount + ', target=' + targetWorkers);
             continue;
         }
 
@@ -50,7 +50,7 @@ trigger AsyncWakeUpTrigger on Async_WakeUp__e (after insert) {
         for (Integer i = 0; i < toEnqueue; i++) {
             System.enqueueJob(new AsyncWorkerQueueable());
         }
-        System.debug('AsyncWakeUpTrigger: PARALLEL_WORKERS - enqueued ' + toEnqueue + ' workers');
+        // System.debug('AsyncWakeUpTrigger: PARALLEL_WORKERS - enqueued ' + toEnqueue + ' workers');
     }
 
     // When REDUCE_BATCH_SIZE: double workers (capped at Max_Number_Worker) and start new ones with the reduced batch size
@@ -63,7 +63,7 @@ trigger AsyncWakeUpTrigger on Async_WakeUp__e (after insert) {
         for (Integer i = 0; i < toEnqueue; i++) {
             System.enqueueJob(new AsyncWorkerQueueable());
         }
-        System.debug('AsyncWakeUpTrigger: Started ' + toEnqueue + ' new workers (target=' + targetWorkers + ', max=' + maxWorkers + ')');
+        // System.debug('AsyncWakeUpTrigger: Started ' + toEnqueue + ' new workers (target=' + targetWorkers + ', max=' + maxWorkers + ')');
     }
 
     if (shouldWakeUpWorker && Limits.getQueueableJobs() < Limits.getLimitQueueableJobs()) {

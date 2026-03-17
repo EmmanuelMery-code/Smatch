@@ -16,7 +16,7 @@ public with sharing class AsyncStatisticsTask implements IAsyncTask {
         try {
             Database.executeBatch(new AsyncLearningBatch());
         } catch (Exception e) {
-            System.debug('AsyncStatisticsTask: Error launching batch - ' + e.getMessage());
+            // System.debug('AsyncStatisticsTask: Error launching batch - ' + e.getMessage());
         } finally {
             scheduleNextRunIfNeeded();
         }

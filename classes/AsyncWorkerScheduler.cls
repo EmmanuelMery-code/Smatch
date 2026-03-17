@@ -32,10 +32,10 @@ public with sharing class AsyncWorkerScheduler implements Schedulable {
                 aborted++;
             }
             if (aborted > 0) {
-                System.debug('AsyncWorkerScheduler: Aborted ' + aborted + ' existing job(s) to restore single-worker mode.');
+                // System.debug('AsyncWorkerScheduler: Aborted ' + aborted + ' existing job(s) to restore single-worker mode.');
             }
         } catch (Exception e) {
-            System.debug('AsyncWorkerScheduler: Could not abort existing jobs. ' + e.getMessage());
+            // System.debug('AsyncWorkerScheduler: Could not abort existing jobs. ' + e.getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ public with sharing class AsyncWorkerScheduler implements Schedulable {
             abortExistingWorkerSchedulerJobs(sc.getTriggerId());
         }
         if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) {
-            System.debug('AsyncWorkerScheduler: Cannot enqueue Worker, limit reached.');
+            // System.debug('AsyncWorkerScheduler: Cannot enqueue Worker, limit reached.');
             return;
         }
         System.enqueueJob(new AsyncWorkerQueueable());

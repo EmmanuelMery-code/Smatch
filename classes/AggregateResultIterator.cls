@@ -19,7 +19,7 @@ public with sharing class AggregateResultIterator implements Iterator<AggregateR
         try {
             this.results = Database.query(query);
         } catch (QueryException e) {
-            System.debug('Error executing SOQL query: ' + e.getMessage());
+            // System.debug('Error executing SOQL query: ' + e.getMessage());
             this.results = new List<AggregateResult>();
             throw e;
         }

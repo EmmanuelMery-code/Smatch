@@ -89,7 +89,7 @@ public with sharing class AsyncFramework_DeletePendingControl {
                 List<AggregateResult> arList = Database.query('SELECT COUNT(Id) cnt FROM SF_Async__c WHERE ' + whereClause);
                 remaining = arList.isEmpty() ? 0 : ((Decimal)arList[0].get('cnt')).intValue();
             } catch (Exception e) {
-                System.debug('AsyncFramework_DeletePendingControl: Could not count remaining. ' + e.getMessage());
+                // System.debug('AsyncFramework_DeletePendingControl: Could not count remaining. ' + e.getMessage());
             }
         }
         

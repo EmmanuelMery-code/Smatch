@@ -26,9 +26,9 @@ public with sharing class AsyncReduceBatchSizeJob implements Queueable {
                 Workers_Count__c = workersCount,
                 Error_Message__c = String.valueOf(newBatchSize)
             ));
-            System.debug('AsyncReduceBatchSizeJob: Override set to ' + newBatchSize + ', workers=' + workersCount + ', event published.');
+            // System.debug('AsyncReduceBatchSizeJob: Override set to ' + newBatchSize + ', workers=' + workersCount + ', event published.');
         } catch (Exception e) {
-            System.debug('AsyncReduceBatchSizeJob: Failed. ' + e.getMessage());
+            // System.debug('AsyncReduceBatchSizeJob: Failed. ' + e.getMessage());
         }
     }
 }

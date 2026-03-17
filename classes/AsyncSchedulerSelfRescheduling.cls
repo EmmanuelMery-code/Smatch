@@ -30,11 +30,11 @@ public with sharing class AsyncSchedulerSelfRescheduling implements Schedulable 
                 + ' ' + runTime.month() + ' ? ' + runTime.year();
             System.schedule(JOB_NAME, cron, new AsyncSchedulerSelfRescheduling());
         } catch (Exception ex) {
-            System.debug('AsyncSchedulerSelfRescheduling: Failed to reschedule. ' + ex.getMessage());
+            // System.debug('AsyncSchedulerSelfRescheduling: Failed to reschedule. ' + ex.getMessage());
         }
         // Launch Watchdog
         if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) {
-            System.debug('AsyncSchedulerSelfRescheduling: Cannot launch Watchdog, limit reached.');
+            // System.debug('AsyncSchedulerSelfRescheduling: Cannot launch Watchdog, limit reached.');
             return;
         }
         try {
@@ -45,9 +45,9 @@ public with sharing class AsyncSchedulerSelfRescheduling implements Schedulable 
         } catch (Exception e) {
             String errorType = e.getTypeName();
             if (errorType.contains('FlexQueue') || errorType.contains('LimitException')) {
-                System.debug('AsyncSchedulerSelfRescheduling: Flex Queue full or limit reached. ' + e.getMessage());
+                // System.debug('AsyncSchedulerSelfRescheduling: Flex Queue full or limit reached. ' + e.getMessage());
             } else {
-                System.debug('AsyncSchedulerSelfRescheduling: ' + e.getMessage());
+                // System.debug('AsyncSchedulerSelfRescheduling: ' + e.getMessage());
             }
         }
     }

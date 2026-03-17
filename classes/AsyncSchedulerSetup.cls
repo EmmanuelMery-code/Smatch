@@ -257,7 +257,7 @@ public with sharing class AsyncSchedulerSetup {
         try {
             EventBus.publish(new Async_WakeUp__e(Event_Type__c = 'WAKEUP'));
         } catch (Exception e) {
-            System.debug('AsyncSchedulerSetup: Could not publish WAKEUP event. Worker will start at next Watchdog run. Error: ' + e.getMessage());
+            // System.debug('AsyncSchedulerSetup: Could not publish WAKEUP event. Worker will start at next Watchdog run. Error: ' + e.getMessage());
         }
     }
     
@@ -362,10 +362,10 @@ public with sharing class AsyncSchedulerSetup {
             Integer freq = AsyncFrameworkConfig.getDefaultSchedulerFrequencyMinutes();
             if (freq == null || freq <= 0) freq = 1;
             scheduleSingleRescheduling(freq, DEFAULT_JOB_NAME);
-            System.debug('AsyncSchedulerSetup: Watchdog scheduler (Async Framework Scheduler 01) created.');
+            // System.debug('AsyncSchedulerSetup: Watchdog scheduler (Async Framework Scheduler 01) created.');
             return true;
         } catch (Exception e) {
-            System.debug('AsyncSchedulerSetup: Failed to create Watchdog scheduler. ' + e.getMessage());
+            // System.debug('AsyncSchedulerSetup: Failed to create Watchdog scheduler. ' + e.getMessage());
             return false;
         }
     }

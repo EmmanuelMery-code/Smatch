@@ -16,13 +16,20 @@ public with sharing class AsyncLearningBatch implements Database.Batchable<Aggre
     * @Exception 
     ***/ 
     public Iterable<AggregateResult> start(Database.BatchableContext BC) {
-        // Building the query with constants
-        // Note: The : binding cannot be used in a dynamic String passed to Database.query()
-        // Here, STATUS_SUCCESS is a safe constant, so concatenation is acceptable
+        // Secure the query: validate and cap inputs to prevent SOQL injection and excessive scope
+        Integer days = AsyncFrameworkConfig.getDaysToAnalyze();
+        days = (days == null || days < 1) ? 7 : Math.min(365, days);
+
+        String status = AsyncFrameworkConfig.getStatusSuccess();
+        if (String.isBlank(status) || status.length() > 50) {
+            status = 'Success';
+        }
+        status = String.escapeSingleQuotes(status);
+
         String query = 'SELECT SF_Async__r.Task_Class_Name__c className, AVG(CPU_Time__c) avgCpu, COUNT(Id) sampleSize ' +
                        'FROM SF_Async_Log__c ' +
-                       'WHERE CreatedDate = LAST_N_DAYS:' + AsyncFrameworkConfig.getDaysToAnalyze() + 
-                       ' AND Status__c = \'' + String.escapeSingleQuotes(AsyncFrameworkConfig.getStatusSuccess()) + '\' ' +
+                       'WHERE CreatedDate = LAST_N_DAYS:' + days +
+                       ' AND Status__c = \'' + status + '\' ' +
                        'GROUP BY SF_Async__r.Task_Class_Name__c';
         return new AggregateResultIterable(query);
     }

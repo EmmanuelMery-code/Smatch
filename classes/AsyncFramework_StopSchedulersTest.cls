@@ -35,7 +35,7 @@ public with sharing class AsyncFramework_StopSchedulersTest {
 
     @isTest
     static void testStopSchedulers_SimulateAbortFailure() {
-        String jobId = System.schedule('Async Test Abort Fail', '0 0 * * * ?', new AsyncScheduler());
+        String jobId = System.schedule('Async Scheduler Abort Fail', '0 0 * * * ?', new AsyncScheduler());
         AsyncFramework_StopSchedulers.testSimulateAbortFailure = true;
 
         List<AsyncFramework_StopSchedulers.FlowResult> results = AsyncFramework_StopSchedulers.stopSchedulers();

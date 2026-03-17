@@ -45,7 +45,7 @@ public with sharing class AsyncCleanupTask implements IAsyncTask {
             }
             
         } catch (Exception e) {
-            System.debug('Error during cleanup: ' + e.getMessage());
+            // System.debug('Error during cleanup: ' + e.getMessage());
         } finally {
             // Rescheduling guaranteed even in case of error
             scheduleNextRunIfNeeded();
@@ -83,7 +83,7 @@ public with sharing class AsyncCleanupTask implements IAsyncTask {
             );
             insert nextRun;
         } else {
-            System.debug('Cleanup already scheduled for tomorrow. No duplicate created.');
+            // System.debug('Cleanup already scheduled for tomorrow. No duplicate created.');
         }
     }
 }

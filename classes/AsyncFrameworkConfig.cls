@@ -21,7 +21,7 @@ public with sharing class AsyncFrameworkConfig {
             try {
                 config = Async_Framework_Configuration__mdt.getInstance('Default_Configuration');
             } catch (Exception e) {
-                System.debug('AsyncFrameworkConfig: Custom Metadata not found, using defaults. Error: ' + e.getMessage());
+                // System.debug('AsyncFrameworkConfig: Custom Metadata not found, using defaults. Error: ' + e.getMessage());
                 return null;
             }
         }

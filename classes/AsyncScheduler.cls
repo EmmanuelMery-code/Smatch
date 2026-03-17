@@ -15,7 +15,7 @@ public with sharing class AsyncScheduler implements Schedulable {
     ***/ 
     public void execute(SchedulableContext SC) {
         if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) {
-            System.debug('AsyncScheduler: Cannot launch Watchdog, limit reached for this transaction.');
+            // System.debug('AsyncScheduler: Cannot launch Watchdog, limit reached for this transaction.');
             return;
         }
 
@@ -29,9 +29,9 @@ public with sharing class AsyncScheduler implements Schedulable {
             // The Watchdog will be relaunched at the next scheduled execution
             String errorType = e.getTypeName();
             if (errorType.contains('FlexQueue') || errorType.contains('LimitException')) {
-                System.debug('AsyncScheduler: Flex Queue is full or limit reached. Watchdog will retry later. Error: ' + e.getMessage());
+                // System.debug('AsyncScheduler: Flex Queue is full or limit reached. Watchdog will retry later. Error: ' + e.getMessage());
             } else {
-                System.debug('AsyncScheduler: Unexpected error: ' + e.getMessage());
+                // System.debug('AsyncScheduler: Unexpected error: ' + e.getMessage());
             }
         }
     }

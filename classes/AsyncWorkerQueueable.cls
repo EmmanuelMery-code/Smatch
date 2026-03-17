@@ -67,9 +67,9 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
         // Identification du worker pour les logs : ROOT (scheduler/Force Start) ou PARALLEL (chaîne)
         String jobIdStr = context != null ? String.valueOf(context.getJobId()) : 'unknown';
         if (chainSpawnRemaining != null) {
-            System.debug('AsyncWorkerQueueable: [PARALLEL] chainRemaining=' + chainSpawnRemaining + ' jobId=' + jobIdStr);
+            // System.debug('AsyncWorkerQueueable: [PARALLEL] chainRemaining=' + chainSpawnRemaining + ' jobId=' + jobIdStr);
         } else {
-            System.debug('AsyncWorkerQueueable: [ROOT] jobId=' + jobIdStr);
+            // System.debug('AsyncWorkerQueueable: [ROOT] jobId=' + jobIdStr);
         }
 
         // NOTE: Chain/parallel spawn moved to END of execute - enqueueJob before callout causes
@@ -134,7 +134,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
                 pendingCount = ((Decimal)arList[0].get('cnt')).intValue();
             }
         } catch (Exception e) {
-            System.debug('AsyncWorkerQueueable: Aggregate failed. ' + e.getMessage());
+            // System.debug('AsyncWorkerQueueable: Aggregate failed. ' + e.getMessage());
         }
         Integer taskLimit = taskLimitMin;
         Integer effectiveLimit = Math.min(dynamicLimit, Math.max(1, taskLimit));
@@ -144,7 +144,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             effectiveLimit = Math.min(effectiveLimit, perfs[0].Max_Tasks_Per_Run_Learned__c.intValue());
         }
 
-        System.debug('SMART BATCHING | Class: ' + targetClass + ' | AvgCost: ' + avgCpuCost + 'ms | BatchLimit: ' + effectiveLimit + (effectiveLimit < dynamicLimit ? ' (capped)' : ''));
+        // System.debug('SMART BATCHING | Class: ' + targetClass + ' | AvgCost: ' + avgCpuCost + 'ms | BatchLimit: ' + effectiveLimit + (effectiveLimit < dynamicLimit ? ' (capped)' : ''));
 
         // Spawn parallel when effectiveLimit low (task/learned limit) and more work pending. Threshold from metadata (default 10).
         Integer parallelThreshold = AsyncFrameworkConfig.getParallelLowThreshold();
@@ -153,7 +153,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
         // Skip parallel spawn if we're a chained worker (already part of parallel batch)
         Boolean isRootWorker = (chainSpawnRemaining == null);
         if (shouldSpawnParallel && (!Test.isRunningTest() || testAllowParallelBlock) && isRootWorker) {
-            System.debug('SMART BATCHING | ROOT worker entering parallel block');
+            // System.debug('SMART BATCHING | ROOT worker entering parallel block');
             // Root worker: always requery pendingCount for parallel decision (aggregate may fail or return 0)
             try {
                 if (Test.isRunningTest() && testSimulatePendingCountFail) throw new QueryException('Simulated COUNT fail');
@@ -162,12 +162,12 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
                     AND Scheduled_Time__c <= :System.now()
                     AND Task_Class_Name__c = :targetClass];
             } catch (Exception e3) {
-                System.debug('AsyncWorkerQueueable: COUNT for pendingCount failed. ' + e3.getMessage());
+                // System.debug('AsyncWorkerQueueable: COUNT for pendingCount failed. ' + e3.getMessage());
             }
-            System.debug('SMART BATCHING | shouldSpawnParallel=true (effectiveLimit=' + effectiveLimit
-                + ', threshold=' + parallelThreshold + ', pendingCount=' + pendingCount + ')');
+            // System.debug('SMART BATCHING | shouldSpawnParallel=true (effectiveLimit=' + effectiveLimit
+            //     + ', threshold=' + parallelThreshold + ', pendingCount=' + pendingCount + ')');
             if (pendingCount <= effectiveLimit) {
-                System.debug('SMART BATCHING | SKIP parallel: pendingCount (' + pendingCount + ') <= effectiveLimit (' + effectiveLimit + ')');
+                // System.debug('SMART BATCHING | SKIP parallel: pendingCount (' + pendingCount + ') <= effectiveLimit (' + effectiveLimit + ')');
             }
             if (pendingCount > effectiveLimit) {
                 Integer maxAllowed = Math.min(PARALLEL_MAX_WORKERS, AsyncFrameworkConfig.getMaxNumberWorker());
@@ -179,13 +179,13 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
                         AND Status IN ('Queued', 'Preparing', 'Processing')];
                     currentWorkers = Math.max(1, cnt);  // at least self (may not be in table yet)
                 } catch (Exception e) {
-                    System.debug('AsyncWorkerQueueable: AsyncApexJob count failed, using 1. ' + e.getMessage());
+                    // System.debug('AsyncWorkerQueueable: AsyncApexJob count failed, using 1. ' + e.getMessage());
                 }
                 workersToSpawn = Math.max(0, Math.min(
                     Math.min(pendingCount - effectiveLimit, maxAllowed - currentWorkers),
                     Math.min(ENQUEUE_LIMIT_PER_TX - 1, CHAIN_DEPTH_SAFE_LIMIT)
                 ));
-                System.debug('SMART BATCHING | workersToSpawn=' + workersToSpawn + ' (pending=' + pendingCount + ', currentWorkers=' + currentWorkers + ', maxAllowed=' + maxAllowed + ')');
+                // System.debug('SMART BATCHING | workersToSpawn=' + workersToSpawn + ' (pending=' + pendingCount + ', currentWorkers=' + currentWorkers + ', maxAllowed=' + maxAllowed + ')');
                 // Defer enqueueJob to END - doing it here blocks callouts with "uncommitted work" error
             }
         }
@@ -207,7 +207,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             ];
         } catch (QueryException qe) {
             if (qe.getMessage() != null && qe.getMessage().contains('Record Currently Unavailable')) {
-                System.debug('AsyncWorkerQueueable: Record lock contention, worker stopping. ' + qe.getMessage());
+                // System.debug('AsyncWorkerQueueable: Record lock contention, worker stopping. ' + qe.getMessage());
                 return;
             }
             throw qe;
@@ -226,14 +226,14 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             // Protection against CPU Time Limit
             Integer cpuReserve = testCpuReserveMs != null ? testCpuReserveMs : AsyncFrameworkConfig.getCpuReserveMs();
             if (Limits.getCpuTime() >= (Limits.getLimitCpuTime() - cpuReserve)) {
-                System.debug('CPU Warning: Stopping batch early to preserve limits.');
+                // System.debug('CPU Warning: Stopping batch early to preserve limits.');
                 break; 
             }
 
             // Protection against DML limit - stop before hitting 10,000 to allow save + reduce event
             Integer dmlThreshold = testDmlSafeThreshold != null ? testDmlSafeThreshold : AsyncFrameworkConfig.getDmlSafeThreshold();
             if (Limits.getDmlRows() >= dmlThreshold) {
-                System.debug('DML Warning: Approaching limit (' + Limits.getDmlRows() + '). Stopping and reducing batch size.');
+                // System.debug('DML Warning: Approaching limit (' + Limits.getDmlRows() + '). Stopping and reducing batch size.');
                 reduceBatchSizeAndPublish(effectiveLimit);
                 reducedBatchSize = true;
                 break;
@@ -300,7 +300,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             if (!logsToInsert.isEmpty()) Database.insert(logsToInsert, false);
             if (!tasksToUpdate.isEmpty()) Database.update(tasksToUpdate, false);
         } catch (Exception e) {
-            System.debug('AsyncWorkerQueueable: Save failed (possible DML limit). ' + e.getMessage());
+            // System.debug('AsyncWorkerQueueable: Save failed (possible DML limit). ' + e.getMessage());
             if (reducedBatchSize) {
                 scheduleNextRun();
                 return;
@@ -320,10 +320,10 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             try {
                 if (Test.isRunningTest() && testSimulateChainSpawnFail) throw new AsyncException('Simulated chain spawn fail');
                 Id childJobId = System.enqueueJob(new AsyncWorkerQueueable(chainSpawnRemaining - 1));
-                System.debug('AsyncWorkerQueueable: [PARALLEL_SPAWN] childJobId=' + childJobId + ' remaining=' + (chainSpawnRemaining - 1));
+                // System.debug('AsyncWorkerQueueable: [PARALLEL_SPAWN] childJobId=' + childJobId + ' remaining=' + (chainSpawnRemaining - 1));
                 chainSpawnSucceeded = true;
             } catch (Exception e) {
-                System.debug('AsyncWorkerQueueable: Chain spawn failed. ' + e.getMessage());
+                // System.debug('AsyncWorkerQueueable: Chain spawn failed. ' + e.getMessage());
                 // Si "Maximum stack depth" (Trial/Dev limit ~5), on devient le dernier : on doit rescheduler.
             }
         }
@@ -332,9 +332,9 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
         if (workersToSpawn > 0 && !Test.isRunningTest() && Limits.getQueueableJobs() < Limits.getLimitQueueableJobs()) {
             try {
                 Id firstChildId = System.enqueueJob(new AsyncWorkerQueueable(workersToSpawn - 1));
-                System.debug('AsyncWorkerQueueable: [PARALLEL_START] firstChildJobId=' + firstChildId + ' total=' + workersToSpawn + ' class=' + targetClass);
+                // System.debug('AsyncWorkerQueueable: [PARALLEL_START] firstChildJobId=' + firstChildId + ' total=' + workersToSpawn + ' class=' + targetClass);
             } catch (Exception e) {
-                System.debug('AsyncWorkerQueueable: Chain parallel failed, fallback to Platform Event. ' + e.getMessage());
+                // System.debug('AsyncWorkerQueueable: Chain parallel failed, fallback to Platform Event. ' + e.getMessage());
                 try {
                     EventBus.publish(new Async_WakeUp__e(
                         Event_Type__c = 'PARALLEL_WORKERS',
@@ -375,24 +375,24 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
                 Integer storedCount = AsyncFrameworkConfig.getActiveWorkerCount();
                 workersCount = (storedCount != null && storedCount > queryCount) ? storedCount : Math.max(1, queryCount);
             }
-            System.debug('AsyncWorkerQueueable: About to publish REDUCE_BATCH_SIZE - batchSize=' + reduced + ', workers=' + workersCount);
+            // System.debug('AsyncWorkerQueueable: About to publish REDUCE_BATCH_SIZE - batchSize=' + reduced + ', workers=' + workersCount);
             EventBus.publish(new Async_WakeUp__e(
                 Event_Type__c = 'REDUCE_BATCH_SIZE',
                 Batch_Size__c = reduced,
                 Workers_Count__c = workersCount,
                 Error_Message__c = 'Batch réduit de ' + currentBatchSize + ' à ' + reduced + '. Workers actifs: ' + workersCount
             ));
-            System.debug('AsyncWorkerQueueable: REDUCE_BATCH_SIZE published successfully.');
+            // System.debug('AsyncWorkerQueueable: REDUCE_BATCH_SIZE published successfully.');
         } catch (Exception e) {
-            System.debug('AsyncWorkerQueueable: EventBus.publish failed, trying fallback. ' + e.getMessage());
+            // System.debug('AsyncWorkerQueueable: EventBus.publish failed, trying fallback. ' + e.getMessage());
             try {
                 if (Test.isRunningTest() && testSimulateSetMaxBatchSizeFail) throw new AsyncException('Simulated setMaxBatchSize fail');
                 AsyncFrameworkConfig.setMaxBatchSizeOverride(reduced);
-                System.debug('AsyncWorkerQueueable: Fallback - Custom Setting updated directly.');
+                // System.debug('AsyncWorkerQueueable: Fallback - Custom Setting updated directly.');
             } catch (Exception e2) {
                 if (!Test.isRunningTest() && Limits.getQueueableJobs() < Limits.getLimitQueueableJobs()) {
                     System.enqueueJob(new AsyncReduceBatchSizeJob(reduced));
-                    System.debug('AsyncWorkerQueueable: Fallback - AsyncReduceBatchSizeJob enqueued.');
+                    // System.debug('AsyncWorkerQueueable: Fallback - AsyncReduceBatchSizeJob enqueued.');
                 }
             }
         }
@@ -415,15 +415,15 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             AsyncSchedulerSetup.ensureWatchdogSchedulerPresent();
             String jobId = AsyncWorkerScheduler.scheduleInMinutes(null);
             Integer freqMinutes = AsyncFrameworkConfig.getDefaultSchedulerFrequencyMinutes();
-            System.debug('AsyncWorkerQueueable: Rescheduled for ' + DateTime.now().addMinutes(freqMinutes).format() + ' (' + freqMinutes + ' min)');
+            // System.debug('AsyncWorkerQueueable: Rescheduled for ' + DateTime.now().addMinutes(freqMinutes).format() + ' (' + freqMinutes + ' min)');
         } catch (Exception e) {
-            System.debug('AsyncWorkerQueueable: Failed to reschedule. Error: ' + e.getMessage());
+            // System.debug('AsyncWorkerQueueable: Failed to reschedule. Error: ' + e.getMessage());
         } finally {
             if (!Test.isRunningTest() || testAllowScheduleNextRun) {
                 try {
                     AsyncFramework_ForceStart.ensureWorkerRunning();
                 } catch (Exception e2) {
-                    System.debug('AsyncWorkerQueueable: ensureWorkerRunning in finally failed. ' + e2.getMessage());
+                    // System.debug('AsyncWorkerQueueable: ensureWorkerRunning in finally failed. ' + e2.getMessage());
                 }
             }
         }
@@ -453,9 +453,9 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             SF_Async_Performance__c perf = existing.isEmpty() ? new SF_Async_Performance__c(Name = className) : existing[0];
             perf.Max_Tasks_Per_Run_Learned__c = maxTasks;
             upsert perf;
-            System.debug('AsyncWorkerQueueable: Learned Max_Tasks_Per_Run_Learned__c=' + maxTasks + ' for class ' + className);
+            // System.debug('AsyncWorkerQueueable: Learned Max_Tasks_Per_Run_Learned__c=' + maxTasks + ' for class ' + className);
         } catch (Exception ex) {
-            System.debug('AsyncWorkerQueueable: Failed to learn Max_Tasks_Per_Run for ' + className + ' - ' + ex.getMessage());
+            // System.debug('AsyncWorkerQueueable: Failed to learn Max_Tasks_Per_Run for ' + className + ' - ' + ex.getMessage());
         }
     }
 
