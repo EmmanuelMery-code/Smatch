@@ -1148,6 +1148,19 @@
                     </styleProperties>
                 </fields>
                 <fields>
+                    <name>title</name>
+                    <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(10, 81, 221);&quot;&gt;SM&lt;/strong&gt;art &lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(10, 81, 221);&quot;&gt;A&lt;/strong&gt;sync &lt;strong style=&quot;color: rgb(10, 81, 221); background-color: rgb(255, 255, 255);&quot;&gt;T&lt;/strong&gt;ask &lt;strong style=&quot;color: rgb(10, 81, 221);&quot;&gt;CH&lt;/strong&gt;aining - {!$Label.Smatch_Screen_ChooseAction}&lt;/p&gt;</fieldText>
+                    <fieldType>DisplayText</fieldType>
+                    <styleProperties>
+                        <verticalAlignment>
+                            <stringValue>top</stringValue>
+                        </verticalAlignment>
+                        <width>
+                            <stringValue>12</stringValue>
+                        </width>
+                    </styleProperties>
+                </fields>
+                <fields>
                     <name>Choose_an_action</name>
                     <choiceReferences>Diagnostic</choiceReferences>
                     <choiceReferences>Force_Start_Worker</choiceReferences>
@@ -1161,19 +1174,6 @@
                     <fieldType>RadioButtons</fieldType>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
                     <isRequired>false</isRequired>
-                    <styleProperties>
-                        <verticalAlignment>
-                            <stringValue>top</stringValue>
-                        </verticalAlignment>
-                        <width>
-                            <stringValue>12</stringValue>
-                        </width>
-                    </styleProperties>
-                </fields>
-                <fields>
-                    <name>title</name>
-                    <fieldText>&lt;p&gt;&lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(10, 81, 221);&quot;&gt;SM&lt;/strong&gt;art &lt;strong style=&quot;background-color: rgb(255, 255, 255); color: rgb(10, 81, 221);&quot;&gt;A&lt;/strong&gt;sync &lt;strong style=&quot;color: rgb(10, 81, 221); background-color: rgb(255, 255, 255);&quot;&gt;T&lt;/strong&gt;ask &lt;strong style=&quot;color: rgb(10, 81, 221);&quot;&gt;CH&lt;/strong&gt;aining - {!$Label.Smatch_Screen_ChooseAction}&lt;/p&gt;</fieldText>
-                    <fieldType>DisplayText</fieldType>
                     <styleProperties>
                         <verticalAlignment>
                             <stringValue>top</stringValue>
