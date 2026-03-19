@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Max_Tasks_Per_Run_Learned__c</fullName>
+    <description>Learned limit from callout/DML ordering errors (e.g. uncommitted work). When set, Worker caps batch size for this class.</description>
+    <externalId>false</externalId>
+    <label>Max Tasks Per Run Learned</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Calculator_Endpoint</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Calculator API base URL (https://newton.vercel.app par défaut)</shortDescription>
+        <value>https://newton.vercel.app</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Button_GoToNav</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Go to navigation</shortDescription>
+        <value>Go to navigation</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_BackToMainMenu</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Back to main menu</shortDescription>
+        <value>Back to main menu</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DailyCalculationOption</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Daily calculation option</shortDescription>
+        <value>Daily calculation option</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_ConfirmDelete</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Confirm deletion</shortDescription>
+        <value>Confirm deletion</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_CustomSchedule</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Custom Schedule</shortDescription>
+        <value>Custom Schedule</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DailyCleanup</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Plan Daily Cleanup</shortDescription>
+        <value>Plan Daily Cleanup</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DailyStat</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Plan a Statistic Daily Calculation</shortDescription>
+        <value>Plan a Statistic Daily Calculation</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DeletePendingAll</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete all pending tasks</shortDescription>
+        <value>Delete all pending tasks</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DeletePendingPreserveStats</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete while preserving stats and cleanup</shortDescription>
+        <value>Delete while preserving stats and cleanup</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_DeletePendingTasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete pending tasks</shortDescription>
+        <value>Delete pending tasks</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_Diagnostic</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Diagnostic</shortDescription>
+        <value>Diagnostic</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_ForceStart</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Force Start Worker</shortDescription>
+        <value>Force Start Worker</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_GetInfo</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Get Info</shortDescription>
+        <value>Get Info</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_RunCleanup</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Run Cleanup</shortDescription>
+        <value>Run Cleanup</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_ScheduleEveryMinute</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Schedule Every Minute</shortDescription>
+        <value>Schedule Every Minute</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_ScheduleEveryMinuteMulti</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Schedule Every Minute (60 schedulers)</shortDescription>
+        <value>Schedule Every Minute (60 schedulers)</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_ScheduleEveryMinuteSingle</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Schedule Every Minute (1 self-rescheduling)</shortDescription>
+        <value>Schedule Every Minute (1 self-rescheduling)</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_SchedulerModeMulti</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Multiple schedulers (N jobs)</shortDescription>
+        <value>Multiple schedulers (N jobs)</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_SchedulerModeSingle</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Single scheduler (1 self-rescheduling)</shortDescription>
+        <value>Single scheduler (1 self-rescheduling)</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_SchedulerParams</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Scheduler Parameters</shortDescription>
+        <value>Scheduler Parameters</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StartStatistic</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Start Statistic</shortDescription>
+        <value>Start Statistic</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StopCleanup</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Stop Cleanup</shortDescription>
+        <value>Stop Cleanup</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StopSchedulers</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Stop Schedulers</shortDescription>
+        <value>Stop Schedulers</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StatisticOption</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic option</shortDescription>
+        <value>Statistic option</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StopStatistic</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Stop Statistic</shortDescription>
+        <value>Stop Statistic</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Cleanup_AlreadyScheduled</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Cleanup already scheduled</shortDescription>
+        <value>Daily cleanup already scheduled. {0} task(s) pending.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Cleanup_NothingScheduled</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>No cleanup scheduled</shortDescription>
+        <value>No scheduled cleanup task.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_DateTime</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Date/time label</shortDescription>
+        <value>Date/time: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Diagnostic error</shortDescription>
+        <value>Diagnostic error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Errors</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Errors section</shortDescription>
+        <value>ERRORS (2h): {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Footer</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Diagnostic footer</shortDescription>
+        <value>=== END OF DIAGNOSTIC ===</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Header</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Diagnostic header</shortDescription>
+        <value>=== ASYNC FRAMEWORK DIAGNOSTIC ===</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_PendingTasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Pending tasks section</shortDescription>
+        <value>PENDING TASKS: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_RecentTasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Recent tasks section</shortDescription>
+        <value>RECENT TASKS:</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Schedulers</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Schedulers section</shortDescription>
+        <value>SCHEDULERS: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Diag_Workers</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Workers section</shortDescription>
+        <value>WORKERS (2h): {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Force start error</shortDescription>
+        <value>Error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_NoQueueable</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>No queueable slots</shortDescription>
+        <value>WARNING: No Queueable slots available.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_PendingTasks</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Pending tasks count</shortDescription>
+        <value>Pending tasks: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_SchedulerActive</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Scheduler active</shortDescription>
+        <value>Scheduler active: {0} - Next execution: {1}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_SchedulerError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Scheduler error</shortDescription>
+        <value>Scheduler error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_SchedulerScheduled</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Scheduler scheduled</shortDescription>
+        <value>Scheduler scheduled (ID: {0})</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_WatchdogError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Watchdog error</shortDescription>
+        <value>Watchdog error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_WatchdogStarted</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Watchdog started</shortDescription>
+        <value>Watchdog started successfully.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_WorkerError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Worker error</shortDescription>
+        <value>Worker error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Force_WorkerStarted</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Worker started</shortDescription>
+        <value>Worker started immediately. Next execution in {0} min.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Result</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Result label</shortDescription>
+        <value>Result</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ChooseAction</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Choose an action</shortDescription>
+        <value>Choose an action</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ChooseOption</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Choose an option</shortDescription>
+        <value>Choose an option</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ChooseParameter</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Choose in Parameter</shortDescription>
+        <value>Choose in Parameter</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_CleanupSubMenu</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Cleanup submenu screen</shortDescription>
+        <value>Cleanup submenu</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_CleanupStatusLabel</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Cleanup scheduled status label</shortDescription>
+        <value>Scheduled cleanup:</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ConfirmChoice</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>What would you like to do?</shortDescription>
+        <value>What would you like to do?</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ConfirmDeletion</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Deletion confirmation</shortDescription>
+        <value>Deletion confirmation</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ConfirmDeletionAlert</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Deletion warning alert</shortDescription>
+        <value>&lt;p&gt;&lt;strong&gt;Warning:&lt;/strong&gt; You are about to delete pending async tasks. This action is irreversible.&lt;/p&gt;&lt;p&gt;Please confirm your choice.&lt;/p&gt;</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_DeletePendingChoice</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete pending tasks - Choice screen</shortDescription>
+        <value>Delete pending tasks - Choice</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_DeletePendingMode</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Deletion mode</shortDescription>
+        <value>Deletion mode</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_DeletePendingText</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Choose deletion mode for pending tasks</shortDescription>
+        <value>&lt;p&gt;Choose the deletion mode for pending async tasks:&lt;/p&gt;</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_ScheduleParam</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Schedule parameter</shortDescription>
+        <value>Schedule parameter</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_SchedulerMode</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Scheduler mode</shortDescription>
+        <value>Scheduler mode</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_SelectFrequency</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Select frequency</shortDescription>
+        <value>Select frequency</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_StatisticSubMenu</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic submenu screen</shortDescription>
+        <value>Statistic submenu</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_StatisticStatusLabel</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic scheduled status label</shortDescription>
+        <value>Scheduled calculation:</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_Title</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SMATCH screen title</shortDescription>
+        <value>SMart Async Task CHaining - choose an action</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Screen_YourResult</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Your result</shortDescription>
+        <value>Your result</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_ActionUnknown</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Unknown action</shortDescription>
+        <value>Unknown action. Use START, START_DAILY or STOP.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_BatchError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Batch error</shortDescription>
+        <value>Batch error {0}: {1}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_BatchStopped</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Batch stopped</shortDescription>
+        <value>Batch stopped: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_DailyAlreadyScheduled</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Daily calculation already scheduled</shortDescription>
+        <value>Daily statistics calculation already scheduled. {0} task(s) pending.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_DailyStopped</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Daily calculation stopped</shortDescription>
+        <value>Daily statistics calculation cancelled. {0} task(s) stopped.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Error prefix</shortDescription>
+        <value>Error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_Inscribed</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistics inscribed in SMATCH</shortDescription>
+        <value>Daily statistics calculation scheduled. Will run now then automatically once per day.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_Label_DailyTask</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Daily statistics task label</shortDescription>
+        <value>Daily statistics task</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_NothingInProgress</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Nothing in progress</shortDescription>
+        <value>No scheduled statistics calculation task in progress.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Stats_Started</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistics calculation started</shortDescription>
+        <value>Statistics calculation started (immediate execution). Job ID: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_DeletePending_Error</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete pending error message</shortDescription>
+        <value>Error: {0}</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_DeletePending_ResultRemaining</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete pending result with remaining - EN: I deleted X records. Y remain.</shortDescription>
+        <value>I deleted {0} record(s). {1} remain.</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_DeletePending_ResultDone</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Delete pending result none remaining - EN: I deleted X records. None remain.</shortDescription>
+        <value>I deleted {0} record(s). None remain.</value>
+    </labels>
+</CustomLabels>
