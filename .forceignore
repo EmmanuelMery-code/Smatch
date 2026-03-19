@@ -13,3 +13,6 @@ package.xml
 
 # Exclure les ressources statiques > 5MB pour permettre le déploiement
 # Ace_sync_smatch: image small (~ko) - déployable
+
+# Structure legacy (metadata à la racine uniquement)
+force-app/
