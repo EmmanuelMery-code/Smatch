@@ -1,6 +1,7 @@
 # Salesforce
 .sfdx/
 .sf/
+main/default/reports/unfiled$public/
 local/
 *.log
 coverage/
