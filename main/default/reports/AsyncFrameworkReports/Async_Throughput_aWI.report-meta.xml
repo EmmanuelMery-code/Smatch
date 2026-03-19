@@ -24,10 +24,6 @@
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Async Throughput</name>
-    <params>
-        <name>co</name>
-        <value>1</value>
-    </params>
     <reportType>CustomEntityCustomEntity$SF_Async__c$SF_Async_Log__c</reportType>
     <scope>user</scope>
     <showDetails>true</showDetails>

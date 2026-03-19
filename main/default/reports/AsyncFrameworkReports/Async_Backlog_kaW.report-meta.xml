@@ -68,10 +68,6 @@
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Async Backlog</name>
-    <params>
-        <name>co</name>
-        <value>1</value>
-    </params>
     <reportType>CustomEntity$SF_Async__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>

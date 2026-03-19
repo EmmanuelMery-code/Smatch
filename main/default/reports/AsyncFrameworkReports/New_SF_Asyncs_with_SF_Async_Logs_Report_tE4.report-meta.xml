@@ -56,10 +56,6 @@
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <name>Async Errors</name>
-    <params>
-        <name>co</name>
-        <value>1</value>
-    </params>
     <reportType>CustomEntityCustomEntity$SF_Async__c$SF_Async_Log__c</reportType>
     <scope>organization</scope>
     <showDetails>true</showDetails>
