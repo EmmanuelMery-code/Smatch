@@ -6,7 +6,7 @@
 .sfdx/
 .localdevserver/
 deploy-options.json
-main/default/reports/unfiled$public/
+reports/unfiled$public/
 local/
 test-result*.json
 test-result*.xml
