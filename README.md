@@ -72,11 +72,11 @@
 
 ### Salesforce
 ```bash
-sf project deploy start --source-dir force-app --target-org <your-org>
+sf project deploy start --source-dir . --target-org <your-org>
 ```
 
 ### GitHub
-Voir [force-app/main/default/docs/DEPLOYMENT_GIT.md](force-app/main/default/docs/DEPLOYMENT_GIT.md) pour les instructions de déploiement vers [EmmanuelMery-code/Smatch](https://github.com/EmmanuelMery-code/Smatch).
+Voir [docs/DEPLOYMENT_GIT.md](docs/DEPLOYMENT_GIT.md) pour les instructions de déploiement vers [EmmanuelMery-code/Smatch](https://github.com/EmmanuelMery-code/Smatch).
 
 ## License | Licence
 

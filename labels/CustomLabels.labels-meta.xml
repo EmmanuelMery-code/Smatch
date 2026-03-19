@@ -29,6 +29,13 @@
         <value>Daily calculation option</value>
     </labels>
     <labels>
+        <fullName>Smatch_Choice_CleanupCategory</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Cleanup category menu</shortDescription>
+        <value>Cleanup</value>
+    </labels>
+    <labels>
         <fullName>Smatch_Choice_ConfirmDelete</fullName>
         <language>en_US</language>
         <protected>false</protected>
@@ -153,6 +160,13 @@
         <protected>false</protected>
         <shortDescription>Start Statistic</shortDescription>
         <value>Start Statistic</value>
+    </labels>
+    <labels>
+        <fullName>Smatch_Choice_StatisticCategory</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Statistic category menu</shortDescription>
+        <value>Statistic</value>
     </labels>
     <labels>
         <fullName>Smatch_Choice_StopCleanup</fullName>
