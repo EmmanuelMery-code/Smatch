@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Configuration constants for the Async Framework. Stores all configurable values without consuming SOQL queries.</description>
+    <label>Async Framework Configuration</label>
+    <pluralLabel>Async Framework Configurations</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

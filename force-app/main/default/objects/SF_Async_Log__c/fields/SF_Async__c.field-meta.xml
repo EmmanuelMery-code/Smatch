@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SF_Async__c</fullName>
+    <description>Link to the parent task.</description>
+    <label>SF Async</label>
+    <referenceTo>SF_Async__c</referenceTo>
+    <relationshipLabel>SF Async Logs</relationshipLabel>
+    <relationshipName>SF_Async_Logs</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
