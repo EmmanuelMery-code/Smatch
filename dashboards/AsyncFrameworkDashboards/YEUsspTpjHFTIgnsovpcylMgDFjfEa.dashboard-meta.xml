@@ -140,8 +140,6 @@
     <dashboardType>LoggedInUser</dashboardType>
     <description>Pilotage du Framework Asynchrone (Backlog, Erreurs, Performance)</description>
     <isGridLayout>true</isGridLayout>
-    <owner>trailsignup.b30f39ec52e0a9@salesforce.com</owner>
-    <runningUser>trailsignup.b30f39ec52e0a9@salesforce.com</runningUser>
     <textColor>#000000</textColor>
     <title>Async Health Monitor</title>
     <titleColor>#000000</titleColor>

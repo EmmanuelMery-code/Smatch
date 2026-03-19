@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DashboardFolder xmlns="http://soap.sforce.com/2006/04/metadata">
-    <folderShares>
-        <accessLevel>Manage</accessLevel>
-        <sharedTo>trailsignup.b30f39ec52e0a9@salesforce.com</sharedTo>
-        <sharedToType>User</sharedToType>
-    </folderShares>
     <name>Async Framework Dashboards</name>
 </DashboardFolder>

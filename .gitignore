@@ -1,8 +1,11 @@
 # Salesforce
 .sfdx/
+.sf/
 local/
 *.log
 coverage/
+test-result*.json
+test-result*.xml
 
 # IDE
 .idea/
