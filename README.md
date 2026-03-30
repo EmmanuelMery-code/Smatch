@@ -117,8 +117,6 @@ insert psa;
 ```
 
 
-# Installation | Déploiement
-
 ## Installation | Déploiement
 
 ### Salesforce
