@@ -232,7 +232,8 @@ public with sharing class AsyncSchedulerSetup {
     ***/ 
     private static String updateMetadataFrequency(Integer minutes) {
         Metadata.CustomMetadata md = new Metadata.CustomMetadata();
-        md.fullName = 'Async_Framework_Configuration__mdt.Default_Configuration';
+        md.fullName = AsyncFrameworkConfig.customMetadataRecordFullName(
+            'Async_Framework_Configuration__mdt', 'Default_Configuration');
         md.label = 'Default Configuration';
         
         Metadata.CustomMetadataValue val = new Metadata.CustomMetadataValue();

@@ -35,9 +35,10 @@ public with sharing class AsyncFramework_CleanupControl {
                     update contextRecord;
                     result.message = 'Cleanup executed successfully. Uses default config: Days_To_Keep=' + AsyncFrameworkConfig.getDaysToKeep() + ', Batch_Size=' + AsyncFrameworkConfig.getCleanupBatchSize() + '.';
                 } else if (request.action == 'START_DAILY') {
+                    List<String> cleanupNames = AsyncFrameworkConfig.taskClassNames(CLEANUP_TASK_CLASS);
                     List<SF_Async__c> existing = [
                         SELECT Id FROM SF_Async__c
-                        WHERE Task_Class_Name__c = :CLEANUP_TASK_CLASS
+                        WHERE Task_Class_Name__c IN :cleanupNames
                         AND Executed__c = FALSE
                         AND Cancelled__c = FALSE
                     ];
@@ -55,10 +56,11 @@ public with sharing class AsyncFramework_CleanupControl {
                         result.message = 'Daily cleanup scheduled. Will run now then automatically once per day.';
                     }
                 } else if (request.action == 'STOP') {
+                    List<String> cleanupNames = AsyncFrameworkConfig.taskClassNames(CLEANUP_TASK_CLASS);
                     List<SF_Async__c> pendingTasks = [
                         SELECT Id, label__c, Before_Cancelling__c
                         FROM SF_Async__c
-                        WHERE Task_Class_Name__c = :CLEANUP_TASK_CLASS
+                        WHERE Task_Class_Name__c IN :cleanupNames
                         AND Executed__c = FALSE
                         AND Cancelled__c = FALSE
                     ];

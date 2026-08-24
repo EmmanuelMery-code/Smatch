@@ -115,10 +115,11 @@ public with sharing class AsyncFramework_Diagnostic {
             lines.add('');
             
             // 6. Statistics scheduled (AsyncStatisticsTask)
+            List<String> statsClassNames = AsyncFrameworkConfig.taskClassNames(AsyncStatisticsTask.class.getName());
             List<SF_Async__c> statsTasks = [
                 SELECT Id, label__c, Scheduled_Time__c
                 FROM SF_Async__c
-                WHERE Task_Class_Name__c = 'AsyncStatisticsTask'
+                WHERE Task_Class_Name__c IN :statsClassNames
                 AND Executed__c = FALSE
                 AND Cancelled__c = FALSE
                 AND Scheduled_Time__c >= :System.now()
@@ -134,10 +135,11 @@ public with sharing class AsyncFramework_Diagnostic {
             lines.add('');
             
             // 7. Cleanup scheduled (AsyncCleanupTask)
+            List<String> cleanupClassNames = AsyncFrameworkConfig.taskClassNames(AsyncCleanupTask.class.getName());
             List<SF_Async__c> cleanupTasks = [
                 SELECT Id, label__c, Scheduled_Time__c
                 FROM SF_Async__c
-                WHERE Task_Class_Name__c = 'AsyncCleanupTask'
+                WHERE Task_Class_Name__c IN :cleanupClassNames
                 AND Executed__c = FALSE
                 AND Cancelled__c = FALSE
                 AND Scheduled_Time__c >= :System.now()

@@ -88,7 +88,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
 
         if (nextTaskIndicator.isEmpty()) {
             AsyncFrameworkConfig.clearMaxBatchSizeOverride();  // Scale down to 1 worker when no tasks left
-            scheduleNextRun();
+            scheduleNextRun(false);
             return;
         }
 
@@ -219,7 +219,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
         List<Async_WakeUp__e> errorEventsToPublish = new List<Async_WakeUp__e>();
 
         // Optimization: retrieving Type only once outside the loop
-        Type taskType = Type.forName(targetClass);
+        Type taskType = resolveTaskType(targetClass);
         Boolean reducedBatchSize = false;
 
         for (SF_Async__c taskRecord : tasksToRun) {
@@ -249,7 +249,9 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             taskRecord.Tries__c = (taskRecord.Tries__c == null ? 0 : taskRecord.Tries__c) + 1;
 
             try {
-                // Type.forName() throws an exception if the class doesn't exist, so no need to check null
+                if (taskType == null) {
+                    throw new AsyncException('Task class not found: ' + targetClass);
+                }
                 IAsyncTask taskInstance = (IAsyncTask) taskType.newInstance();
                 taskInstance.run(taskRecord);
                 
@@ -399,27 +401,52 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
     }
 
     /*** 
+    * @description Resolves a task class name with or without package namespace.
+    ***/ 
+    private static Type resolveTaskType(String targetClass) {
+        if (String.isBlank(targetClass)) {
+            return null;
+        }
+        Type taskType = Type.forName(targetClass);
+        if (taskType != null) {
+            return taskType;
+        }
+        String ns = AsyncFrameworkConfig.getNamespacePrefix();
+        if (String.isNotBlank(ns) && !targetClass.contains('.')) {
+            taskType = Type.forName(ns + '.' + targetClass);
+            if (taskType != null) {
+                return taskType;
+            }
+        }
+        if (targetClass.contains('.')) {
+            return Type.forName(targetClass.substringAfterLast('.'));
+        }
+        return null;
+    }
+
+    /*** 
     * @description Schedules the next Worker run at (now + Scheduler_Frequency_Minutes)
     *              Read from Async_Framework_Configuration__mdt metadata.
-    *              Version simplifiée (parallélisme maximal). finally appelle Force Start pour garantir
-    *              qu'au moins un worker reste en route même si schedule/abort a tout arrêté.
-    * @param  
-    * @return 
-    * @Exception 
     ***/ 
     private void scheduleNextRun() {
+        scheduleNextRun(true);
+    }
+
+    /*** 
+    * @description Schedules the next Worker run. When enqueueWorkerNow is false (idle / no tasks),
+    *              does not enqueue another worker — that caused concurrent System.schedule deadlocks.
+    ***/ 
+    private void scheduleNextRun(Boolean enqueueWorkerNow) {
         if (Test.isRunningTest() && !testAllowScheduleNextRun) return;
 
         try {
             if (Test.isRunningTest() && testSimulateScheduleFail) throw new AsyncException('Simulated schedule fail');
             AsyncSchedulerSetup.ensureWatchdogSchedulerPresent();
-            String jobId = AsyncWorkerScheduler.scheduleInMinutes(null);
-            Integer freqMinutes = AsyncFrameworkConfig.getDefaultSchedulerFrequencyMinutes();
-            // System.debug('AsyncWorkerQueueable: Rescheduled for ' + DateTime.now().addMinutes(freqMinutes).format() + ' (' + freqMinutes + ' min)');
+            AsyncWorkerScheduler.scheduleInMinutes(null);
         } catch (Exception e) {
             // System.debug('AsyncWorkerQueueable: Failed to reschedule. Error: ' + e.getMessage());
         } finally {
-            if (!Test.isRunningTest() || testAllowScheduleNextRun) {
+            if (enqueueWorkerNow && (!Test.isRunningTest() || testAllowScheduleNextRun)) {
                 try {
                     AsyncFramework_ForceStart.ensureWorkerRunning();
                 } catch (Exception e2) {

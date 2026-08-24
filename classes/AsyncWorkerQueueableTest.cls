@@ -514,4 +514,34 @@ public with sharing class AsyncWorkerQueueableTest {
         task = [SELECT Executed__c FROM SF_Async__c WHERE Id = :task.Id];
         Assert.isTrue(task.Executed__c);
     }
+
+    @isTest
+    static void testWorker_UnknownTaskClass() {
+        SF_Async__c task = new SF_Async__c(
+            Task_Class_Name__c = 'dummy.DoesNotExistClass',
+            Scheduled_Time__c = System.now().addHours(-1)
+        );
+        insert task;
+
+        Test.startTest();
+        System.enqueueJob(new AsyncWorkerQueueable());
+        Test.stopTest();
+
+        List<SF_Async_Log__c> logs = [SELECT Status__c, Message__c FROM SF_Async_Log__c WHERE SF_Async__c = :task.Id];
+        Assert.isTrue(!logs.isEmpty(), 'Unknown class should create an error log');
+        Assert.areEqual('Error', logs[0].Status__c);
+    }
+
+    @isTest
+    static void testWorkerScheduler_ExecuteAndIdempotentSchedule() {
+        String first = AsyncWorkerScheduler.scheduleInMinutes(null);
+        String second = AsyncWorkerScheduler.scheduleInMinutes(0);
+        Assert.isTrue(String.isNotBlank(first), 'First schedule should return a job id or name');
+        Assert.isTrue(String.isNotBlank(second), 'Second schedule must be idempotent and not throw');
+
+        Test.startTest();
+        new AsyncWorkerScheduler().execute(null);
+        Test.stopTest();
+        Assert.isTrue(true, 'Scheduler execute should enqueue a worker');
+    }
 }

@@ -33,11 +33,23 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>AsyncFramework_DeletePendingControl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>AsyncFramework_DeletePendingFlow</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>AsyncFramework_ForceStart</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>AsyncFramework_StatisticsControl</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>AsyncFramework_StopSchedulers</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -49,7 +61,15 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>AsyncReduceBatchSizeJob</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>AsyncScheduler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>AsyncSchedulerSelfRescheduling</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -65,6 +85,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>AsyncTaskScheduleInfo</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>AsyncWatchdogQueueable</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -77,9 +101,21 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>DateTimeFormatUtil</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>IAsyncTask</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Async_Framework_Configuration__mdt</name>
+    </customMetadataTypeAccesses>
+    <customSettingAccesses>
+        <enabled>true</enabled>
+        <name>Async_Runtime_Config__c</name>
+    </customSettingAccesses>
     <description>Full access to the Smatch application for all users</description>
     <fieldPermissions>
         <editable>true</editable>
@@ -176,6 +212,10 @@
         <field>SF_Async__c.label__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>Async_Framework_Control</flow>
+    </flowAccesses>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Smatch Access</label>
     <objectPermissions>
@@ -218,4 +258,20 @@
         <viewAllFields>false</viewAllFields>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <tabSettings>
+        <tab>SF_Async_Log__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>SF_Async_Performance__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>SF_Async__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Smatch_Home</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

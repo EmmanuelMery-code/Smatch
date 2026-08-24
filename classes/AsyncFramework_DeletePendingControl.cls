@@ -49,10 +49,9 @@ public with sharing class AsyncFramework_DeletePendingControl {
     ***/ 
     public static DeleteResult deleteOrMaintain(Boolean deletePending) {
         if (testSimulateException) throw new AsyncFramework_DeletePendingControlTestException('Simulated delete failure');
-        String whereClause = deletePending == true
-            ? 'Executed__c = false AND Cancelled__c = false'
-            : 'Executed__c = false AND Cancelled__c = false AND Task_Class_Name__c != \'' + CLEANUP_TASK_CLASS + '\' AND Task_Class_Name__c != \'' + STATISTICS_TASK_CLASS + '\'';
-        String soql = 'SELECT Id FROM SF_Async__c WHERE ' + whereClause + ' LIMIT ' + BATCH_SIZE;
+        List<String> preserveClasses = new List<String>();
+        preserveClasses.addAll(AsyncFrameworkConfig.taskClassNames(CLEANUP_TASK_CLASS));
+        preserveClasses.addAll(AsyncFrameworkConfig.taskClassNames(STATISTICS_TASK_CLASS));
         
         Integer totalDeleted = 0;
         Integer cpuReserve = AsyncFrameworkConfig.getCleanupCpuReserveMs();
@@ -63,7 +62,9 @@ public with sharing class AsyncFramework_DeletePendingControl {
             if (Limits.getCpuTime() >= (Limits.getLimitCpuTime() - cpuReserve)) {
                 break;
             }
-            List<SF_Async__c> pendingRecords = Database.query(soql);
+            List<SF_Async__c> pendingRecords = (deletePending == true)
+                ? [SELECT Id FROM SF_Async__c WHERE Executed__c = false AND Cancelled__c = false LIMIT :BATCH_SIZE]
+                : [SELECT Id FROM SF_Async__c WHERE Executed__c = false AND Cancelled__c = false AND Task_Class_Name__c NOT IN :preserveClasses LIMIT :BATCH_SIZE];
             
             if (pendingRecords.isEmpty()) {
                 exitOnEmpty = true;
@@ -86,8 +87,9 @@ public with sharing class AsyncFramework_DeletePendingControl {
         Integer remaining = 0;
         if (!exitOnEmpty && Limits.getQueries() < Limits.getLimitQueries()) {
             try {
-                List<AggregateResult> arList = Database.query('SELECT COUNT(Id) cnt FROM SF_Async__c WHERE ' + whereClause);
-                remaining = arList.isEmpty() ? 0 : ((Decimal)arList[0].get('cnt')).intValue();
+                remaining = (deletePending == true)
+                    ? [SELECT COUNT() FROM SF_Async__c WHERE Executed__c = false AND Cancelled__c = false]
+                    : [SELECT COUNT() FROM SF_Async__c WHERE Executed__c = false AND Cancelled__c = false AND Task_Class_Name__c NOT IN :preserveClasses];
             } catch (Exception e) {
                 // System.debug('AsyncFramework_DeletePendingControl: Could not count remaining. ' + e.getMessage());
             }

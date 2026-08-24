@@ -60,13 +60,13 @@ public with sharing class AsyncCleanupTask implements IAsyncTask {
     ***/ 
     private void scheduleNextRunIfNeeded() {
         // Idempotency check: avoids duplicates if multiple instances run simultaneously
-        String className = AsyncCleanupTask.class.getName();
+        List<String> classNames = AsyncFrameworkConfig.taskClassNames(AsyncCleanupTask.class.getName());
         Date tomorrow = System.today().addDays(1);
         
         Integer existingJobs = [
             SELECT Count() 
             FROM SF_Async__c 
-            WHERE Task_Class_Name__c = :className 
+            WHERE Task_Class_Name__c IN :classNames 
             AND Scheduled_Time__c >= :tomorrow
             AND Executed__c = FALSE
             AND Cancelled__c = FALSE
@@ -76,7 +76,7 @@ public with sharing class AsyncCleanupTask implements IAsyncTask {
         if (existingJobs == 0) {
             SF_Async__c nextRun = new SF_Async__c(
                 label__c = 'Daily Cleanup',
-                Task_Class_Name__c = className,
+                Task_Class_Name__c = AsyncCleanupTask.class.getName(),
                 Scheduled_Time__c = System.now().addDays(1),
                 Before_Cancelling__c = AsyncFrameworkConfig.getBeforeCancelling(),
                 Execution_Order__c = AsyncFrameworkConfig.getExecutionOrder()

@@ -907,7 +907,7 @@
         <filterLogic>and</filterLogic>
         <filters>
             <field>Task_Class_Name__c</field>
-            <operator>EqualTo</operator>
+            <operator>Contains</operator>
             <value>
                 <stringValue>AsyncCleanupTask</stringValue>
             </value>
@@ -943,7 +943,7 @@
         <filterLogic>and</filterLogic>
         <filters>
             <field>Task_Class_Name__c</field>
-            <operator>EqualTo</operator>
+            <operator>Contains</operator>
             <value>
                 <stringValue>AsyncStatisticsTask</stringValue>
             </value>

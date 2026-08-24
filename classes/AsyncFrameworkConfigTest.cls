@@ -166,4 +166,30 @@ public with sharing class AsyncFrameworkConfigTest {
         Integer freq = AsyncFrameworkConfig.getDefaultSchedulerFrequencyMinutes();
         Assert.isTrue(freq >= 1);
     }
+
+    @isTest
+    static void testGetDeletePendingMaxIterations() {
+        Integer iterations = AsyncFrameworkConfig.getDeletePendingMaxIterations();
+        Assert.isTrue(iterations >= 1 && iterations <= 100);
+    }
+
+    @isTest
+    static void testNamespaceAndTaskClassNames() {
+        String prefix = AsyncFrameworkConfig.getNamespacePrefix();
+        Assert.isTrue(prefix == '' || String.isNotBlank(prefix));
+
+        List<String> names = AsyncFrameworkConfig.taskClassNames('AsyncCleanupTask');
+        Assert.isTrue(names.contains('AsyncCleanupTask'));
+
+        List<String> namespaced = AsyncFrameworkConfig.taskClassNames('ns.AsyncCleanupTask');
+        Assert.isTrue(namespaced.contains('ns.AsyncCleanupTask'));
+        Assert.isTrue(namespaced.contains('AsyncCleanupTask'));
+
+        List<String> blank = AsyncFrameworkConfig.taskClassNames('');
+        Assert.areEqual(0, blank.size());
+
+        String fullName = AsyncFrameworkConfig.customMetadataRecordFullName(
+            'Async_Framework_Configuration__mdt', 'Default_Configuration');
+        Assert.isTrue(fullName.contains('Async_Framework_Configuration__mdt.Default_Configuration'));
+    }
 }

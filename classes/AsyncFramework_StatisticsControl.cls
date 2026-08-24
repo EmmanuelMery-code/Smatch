@@ -32,9 +32,10 @@ public with sharing class AsyncFramework_StatisticsControl {
                     result.message = String.format(System.Label.Smatch_Stats_Started, new List<String>{ String.valueOf(jobId) });
                 } else if (request.action == 'START_DAILY') {
                     // Check that no daily task is already scheduled
+                    List<String> statsNames = AsyncFrameworkConfig.taskClassNames(STATISTICS_TASK_CLASS);
                     List<SF_Async__c> existing = [
                         SELECT Id FROM SF_Async__c
-                        WHERE Task_Class_Name__c = :STATISTICS_TASK_CLASS
+                        WHERE Task_Class_Name__c IN :statsNames
                         AND Executed__c = FALSE
                         AND Cancelled__c = FALSE
                     ];
@@ -72,10 +73,11 @@ public with sharing class AsyncFramework_StatisticsControl {
                     
                     // 2. Cancel pending SMATCH AsyncStatisticsTask tasks (daily calculation)
                     // Cancelled__c is a formula = Tries__c >= Before_Cancelling__c, set Tries to max value
+                    List<String> statsNames = AsyncFrameworkConfig.taskClassNames(STATISTICS_TASK_CLASS);
                     List<SF_Async__c> pendingTasks = [
                         SELECT Id, label__c, Before_Cancelling__c
                         FROM SF_Async__c
-                        WHERE Task_Class_Name__c = :STATISTICS_TASK_CLASS
+                        WHERE Task_Class_Name__c IN :statsNames
                         AND Executed__c = FALSE
                         AND Cancelled__c = FALSE
                     ];

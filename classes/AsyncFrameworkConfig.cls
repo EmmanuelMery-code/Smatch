@@ -15,6 +15,50 @@ public with sharing class AsyncFrameworkConfig {
     public static void clearConfig() {
         config = null;
     }
+
+    /*** 
+    * @description Namespace of this packaged class, or blank when unpackaged.
+    ***/ 
+    public static String getNamespacePrefix() {
+        String name = AsyncFrameworkConfig.class.getName();
+        Integer dot = name.indexOf('.');
+        return dot > 0 ? name.substring(0, dot) : '';
+    }
+
+    /*** 
+    * @description Custom Metadata fullName including package namespace when present.
+    *              Example: Async_Framework_Configuration__mdt.Default_Configuration
+    *              or ns__Async_Framework_Configuration__mdt.Default_Configuration
+    ***/ 
+    public static String customMetadataRecordFullName(String objectApiName, String recordDeveloperName) {
+        String ns = getNamespacePrefix();
+        String obj = String.isBlank(ns) ? objectApiName : ns + '__' + objectApiName;
+        return obj + '.' + recordDeveloperName;
+    }
+
+    /*** 
+    * @description Class names to match SF_Async__c.Task_Class_Name__c in packaged and unpackaged orgs.
+    ***/ 
+    public static List<String> taskClassNames(String className) {
+        List<String> names = new List<String>();
+        if (String.isBlank(className)) {
+            return names;
+        }
+        names.add(className);
+        Integer lastDot = className.lastIndexOf('.');
+        if (lastDot > 0 && lastDot < className.length() - 1) {
+            String shortName = className.substring(lastDot + 1);
+            if (!names.contains(shortName)) {
+                names.add(shortName);
+            }
+        } else {
+            String ns = getNamespacePrefix();
+            if (String.isNotBlank(ns)) {
+                names.add(ns + '.' + className);
+            }
+        }
+        return names;
+    }
     
     private static Async_Framework_Configuration__mdt getConfig() {
         if (config == null) {

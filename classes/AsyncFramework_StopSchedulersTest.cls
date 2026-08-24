@@ -28,6 +28,8 @@ public with sharing class AsyncFramework_StopSchedulersTest {
     @isTest
     static void testStopSchedulers_WithAsyncWorker() {
         AsyncWorkerScheduler.scheduleInMinutes(5);
+        String second = AsyncWorkerScheduler.scheduleInMinutes(5);
+        Assert.isTrue(String.isNotBlank(second), 'Second schedule should reuse the existing job');
         List<AsyncFramework_StopSchedulers.FlowResult> results = AsyncFramework_StopSchedulers.stopSchedulers();
         Assert.isTrue(!results.isEmpty());
         Assert.isTrue(String.isNotBlank(results[0].message));
@@ -47,8 +49,8 @@ public with sharing class AsyncFramework_StopSchedulersTest {
 
     @isTest
     static void testStopSchedulers_PartialAbortStoppedAndErrors() {
-        System.schedule('Async Stop 01', '0 0 * * * ?', new AsyncScheduler());
-        System.schedule('Async Stop 02', '0 5 * * * ?', new AsyncScheduler());
+        System.schedule('Async Scheduler Stop 01', '0 0 * * * ?', new AsyncScheduler());
+        System.schedule('Async Scheduler Stop 02', '0 5 * * * ?', new AsyncScheduler());
 
         AsyncFramework_StopSchedulers.testSimulateAbortFailureOnNth = 2;
 

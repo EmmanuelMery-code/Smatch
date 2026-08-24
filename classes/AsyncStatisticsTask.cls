@@ -29,13 +29,13 @@ public with sharing class AsyncStatisticsTask implements IAsyncTask {
     * @Exception 
     ***/ 
     private void scheduleNextRunIfNeeded() {
-        String className = AsyncStatisticsTask.class.getName();
+        List<String> classNames = AsyncFrameworkConfig.taskClassNames(AsyncStatisticsTask.class.getName());
         Date tomorrow = System.today().addDays(1);
         
         Integer existingJobs = [
             SELECT Count()
             FROM SF_Async__c
-            WHERE Task_Class_Name__c = :className
+            WHERE Task_Class_Name__c IN :classNames
             AND Scheduled_Time__c >= :tomorrow
             AND Executed__c = FALSE
             AND Cancelled__c = FALSE
@@ -45,7 +45,7 @@ public with sharing class AsyncStatisticsTask implements IAsyncTask {
         if (existingJobs == 0) {
             SF_Async__c nextRun = new SF_Async__c(
                 label__c = System.Label.Smatch_Stats_Label_DailyTask,
-                Task_Class_Name__c = className,
+                Task_Class_Name__c = AsyncStatisticsTask.class.getName(),
                 Scheduled_Time__c = System.now().addDays(1),
                 Before_Cancelling__c = AsyncFrameworkConfig.getBeforeCancelling(),
                 Execution_Order__c = AsyncFrameworkConfig.getExecutionOrder()
