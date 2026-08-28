@@ -439,20 +439,44 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
     private void scheduleNextRun(Boolean enqueueWorkerNow) {
         if (Test.isRunningTest() && !testAllowScheduleNextRun) return;
 
+        Boolean nextRunSecured = false;
         try {
             if (Test.isRunningTest() && testSimulateScheduleFail) throw new AsyncException('Simulated schedule fail');
             AsyncSchedulerSetup.ensureWatchdogSchedulerPresent();
-            AsyncWorkerScheduler.scheduleInMinutes(null);
+            nextRunSecured = String.isNotBlank(AsyncWorkerScheduler.scheduleInMinutes(null));
         } catch (Exception e) {
             // System.debug('AsyncWorkerQueueable: Failed to reschedule. Error: ' + e.getMessage());
         } finally {
             if (enqueueWorkerNow && (!Test.isRunningTest() || testAllowScheduleNextRun)) {
                 try {
-                    AsyncFramework_ForceStart.ensureWorkerRunning();
+                    nextRunSecured = AsyncFramework_ForceStart.ensureWorkerRunning() || nextRunSecured;
                 } catch (Exception e2) {
                     // System.debug('AsyncWorkerQueueable: ensureWorkerRunning in finally failed. ' + e2.getMessage());
                 }
             }
+            if (!nextRunSecured) {
+                publishSchedulingFailure();
+            }
+        }
+    }
+
+    /*** 
+    * @description Signale qu'aucune execution suivante n'a pu etre garantie. Sans ce signal,
+    *              l'arret du framework est totalement silencieux et les SF_Async__c restent
+    *              en attente sans aucune trace, jusqu'a une relance manuelle.
+    ***/ 
+    private static void publishSchedulingFailure() {
+        if (Test.isRunningTest()) {
+            return;
+        }
+        try {
+            EventBus.publish(new Async_WakeUp__e(
+                Event_Type__c = 'ERROR',
+                Class_Name__c = 'AsyncWorkerScheduler',
+                Error_Message__c = 'Aucune execution suivante du Worker n\'a pu etre planifiee : les taches SF_Async__c en attente ne seront pas reprises sans relance manuelle.'
+            ));
+        } catch (Exception e) {
+            // System.debug('AsyncWorkerQueueable: Could not publish scheduling failure. ' + e.getMessage());
         }
     }
     

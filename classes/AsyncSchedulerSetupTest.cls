@@ -99,11 +99,18 @@ public with sharing class AsyncSchedulerSetupTest {
 
     @isTest
     static void testRemoveExistingSchedules() {
-        System.schedule('Async Temp', '0 0 * * * ?', new AsyncScheduler());
+        // Le nom doit contenir "Scheduler" pour entrer dans le filtre de removeExistingSchedules :
+        // "Async Temp" n'y entrait pas, le test ne passait que grace aux jobs DELETED residuels.
+        System.schedule('Async Temp Scheduler', '0 0 * * * ?', new AsyncScheduler());
 
         Integer removed = AsyncSchedulerSetup.removeExistingSchedules();
 
-        Assert.isTrue(removed >= 1);
+        Assert.isTrue(removed >= 1, 'Le job planifie et vivant doit etre annule');
+        Assert.areEqual(
+            0,
+            AsyncSchedulerSetup.removeExistingSchedules(),
+            'Un second appel ne doit plus rien trouver a annuler'
+        );
     }
 
     @isTest

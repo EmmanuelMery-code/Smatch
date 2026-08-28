@@ -3,40 +3,29 @@
 * @date 11/02/2026 
 * @description Schedulable wrapper to enqueue AsyncWorkerQueueable. Used when the Worker
 *              reschedules itself based on Scheduler_Frequency_Minutes metadata.
-*              Uses a single fixed job name so concurrent workers never System.schedule+abortJob
-*              the same Apex class (uncatchable deadlock on cReferences.insert_references).
+*              Idempotence par recherche d'un job vivant, jamais par nom fixe : le cron produit
+*              ici est un one-shot, et reutiliser son nom apres declenchement fait echouer
+*              System.schedule. Aucun abortJob n'est effectue (deadlock cReferences).
 ***/ 
 public with sharing class AsyncWorkerScheduler implements Schedulable {
 
-    @TestVisible private static final String JOB_NAME = 'AsyncWorker Recurring';
+    @TestVisible private static final String JOB_NAME_PREFIX = AsyncCronJobNames.WORKER_PREFIX;
 
     /*** 
     * @description Returns the Id of an already scheduled AsyncWorker job, if any.
-    *              Includes the canonical name and leftover timestamped names from older versions.
+    *              Couvre le nom canonique et les noms horodates des versions precedentes.
     ***/ 
     private static Id findExistingWorkerJobId() {
-        List<CronTrigger> existing = [
-            SELECT Id, CronJobDetail.Name FROM CronTrigger
-            WHERE CronJobDetail.JobType = '7'
-            AND CronJobDetail.Name LIKE 'AsyncWorker%'
-            AND State != 'DELETED'
-            ORDER BY CreatedDate ASC
-        ];
-        for (CronTrigger ct : existing) {
-            String name = ct.CronJobDetail != null ? ct.CronJobDetail.Name : '';
-            if (name == JOB_NAME) {
-                return ct.Id;
-            }
-        }
-        return existing.isEmpty() ? null : existing[0].Id;
+        return AsyncCronJobNames.findLiveJobId(JOB_NAME_PREFIX);
     }
 
     /*** 
     * @description Schedules the Worker to run in n minutes (current time + minutes).
-    *              Idempotent: a single fixed job name is used. If it already exists, System.schedule
-    *              is not retried after a duplicate error. Never aborts jobs (deadlock).
+    *              Idempotent : si un job vivant existe deja, son Id est renvoye sans replanifier.
+    *              Sinon un nom unique est genere, pour que le CronJobDetail du precedent one-shot
+    *              ne bloque pas la creation. Never aborts jobs (deadlock).
     * @param minutes Number of minutes from now. If null or <= 0, uses Scheduler_Frequency_Minutes from metadata.
-    * @return String The scheduled job ID, or a non-blank marker when the job already exists
+    * @return String The scheduled job ID, or null when no Worker run could be scheduled
     ***/ 
     public static String scheduleInMinutes(Integer minutes) {
         if (minutes == null || minutes <= 0) {
@@ -50,10 +39,12 @@ public with sharing class AsyncWorkerScheduler implements Schedulable {
         String cronExp = '0 ' + runTime.minute() + ' ' + runTime.hour() + ' '
             + runTime.day() + ' ' + runTime.month() + ' ? ' + runTime.year();
         try {
-            return System.schedule(JOB_NAME, cronExp, new AsyncWorkerScheduler());
+            return System.schedule(AsyncCronJobNames.uniqueName(JOB_NAME_PREFIX), cronExp, new AsyncWorkerScheduler());
         } catch (Exception e) {
+            // Une course a pu creer le job entre-temps ; sinon on renvoie null pour que
+            // l'appelant sache qu'aucune relance n'est garantie, au lieu de le masquer.
             existingId = findExistingWorkerJobId();
-            return existingId != null ? String.valueOf(existingId) : JOB_NAME;
+            return existingId != null ? String.valueOf(existingId) : null;
         }
     }
     

@@ -158,11 +158,13 @@ public with sharing class AsyncSchedulerSetup {
     private static ScheduleInfoResponse getScheduleInfo() {
         ScheduleInfoResponse response = new ScheduleInfoResponse();
         
+        // State != DELETED : sinon l'ecran de Setup affiche comme actif un one-shot deja consomme.
         List<CronTrigger> schedulerJobs = [
             SELECT Id, CronExpression, NextFireTime, State, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.JobType = '7'
             AND (CronJobDetail.Name LIKE '%Async%Scheduler%' OR CronJobDetail.Name LIKE '%AsyncScheduler%')
+            AND State != 'DELETED'
             ORDER BY CreatedDate DESC
         ];
 
@@ -300,20 +302,23 @@ public with sharing class AsyncSchedulerSetup {
         if (useSingleScheduler == true) {
             return scheduleSingleRescheduling(frequencyMinutes, jobName);
         }
+        // Les noms restent suffixes par leur numero de creneau (lisibilite dans Setup) mais
+        // passent par uniqueName : removeExistingSchedules vient de laisser des CronJobDetail
+        // homonymes derriere lui, qui feraient echouer System.schedule.
         String jobId = null;
         if (frequencyMinutes == 60) {
-            jobId = System.schedule(jobName + ' 01', '0 0 * * * ?', new AsyncScheduler());
+            jobId = System.schedule(AsyncCronJobNames.uniqueName(jobName + ' 01'), '0 0 * * * ?', new AsyncScheduler());
         } else if (frequencyMinutes >= 1 && frequencyMinutes < 60 && Math.mod(60, frequencyMinutes) == 0) {
             Integer minute = 0;
             Integer intervals = 60 / frequencyMinutes;
             for (Integer i = 0; i < intervals; i++) {
                 String cron = '0 ' + minute + ' * * * ?';
                 String name = intervals > 1 ? (jobName + ' ' + padJobNumber(i + 1)) : (jobName + ' 01');
-                jobId = System.schedule(name, cron, new AsyncScheduler());
+                jobId = System.schedule(AsyncCronJobNames.uniqueName(name), cron, new AsyncScheduler());
                 minute += frequencyMinutes;
             }
         } else {
-            jobId = System.schedule(jobName + ' 01', '0 0 * * * ?', new AsyncScheduler());
+            jobId = System.schedule(AsyncCronJobNames.uniqueName(jobName + ' 01'), '0 0 * * * ?', new AsyncScheduler());
         }
         return jobId;
     }
@@ -329,8 +334,7 @@ public with sharing class AsyncSchedulerSetup {
         DateTime runTime = DateTime.now().addMinutes(frequencyMinutes);
         String cron = '0 ' + runTime.minute() + ' ' + runTime.hour() + ' ' + runTime.day()
             + ' ' + runTime.month() + ' ? ' + runTime.year();
-        String name = jobName + ' 01';
-        return System.schedule(name, cron, new AsyncSchedulerSelfRescheduling());
+        return System.schedule(AsyncCronJobNames.uniqueName(jobName), cron, new AsyncSchedulerSelfRescheduling());
     }
     
     /*** 
@@ -351,14 +355,10 @@ public with sharing class AsyncSchedulerSetup {
     * @Exception 
     ***/ 
     public static Boolean ensureWatchdogSchedulerPresent() {
-        // Watchdog jobs: "Async Framework Scheduler 01" etc. - excludes AsyncWorker (no "Scheduler" in name)
-        List<CronTrigger> watchdogJobs = [
-            SELECT Id FROM CronTrigger
-            WHERE CronJobDetail.JobType = '7'
-            AND (CronJobDetail.Name LIKE '%Async Framework Scheduler%' OR CronJobDetail.Name LIKE '%Async%Scheduler%')
-            LIMIT 1
-        ];
-        if (!watchdogJobs.isEmpty()) return true;
+        // Watchdog jobs: "Async Framework Scheduler ..." - exclut AsyncWorker (pas de "Scheduler" dans le nom).
+        // La recherche ignore les jobs a l'etat DELETED : un one-shot deja declenche ne relancera
+        // plus rien, et le compter comme present laissait le framework sans watchdog.
+        if (AsyncCronJobNames.findLiveJobId(AsyncCronJobNames.WATCHDOG_PREFIX) != null) return true;
         try {
             Integer freq = AsyncFrameworkConfig.getDefaultSchedulerFrequencyMinutes();
             if (freq == null || freq <= 0) freq = 1;
@@ -382,9 +382,20 @@ public with sharing class AsyncSchedulerSetup {
             SELECT Id FROM CronTrigger 
             WHERE CronJobDetail.JobType = '7' 
             AND (CronJobDetail.Name LIKE '%Async%Scheduler%' OR CronJobDetail.Name LIKE '%AsyncScheduler%')
+            AND State != 'DELETED'
         ];
-        for (CronTrigger ct : existingJobs) System.abortJob(ct.Id);
-        return existingJobs.size();
+        // Un abortJob qui echoue (job deja termine entre la requete et l'appel) ne doit pas
+        // faire echouer toute la reconfiguration du scheduler.
+        Integer aborted = 0;
+        for (CronTrigger ct : existingJobs) {
+            try {
+                System.abortJob(ct.Id);
+                aborted++;
+            } catch (Exception e) {
+                // Job deja disparu : rien a annuler.
+            }
+        }
+        return aborted;
     }
     
     /*** 

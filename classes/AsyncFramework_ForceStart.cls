@@ -76,26 +76,32 @@ public with sharing class AsyncFramework_ForceStart {
                 }
             }
             
-            // Check/schedule the Scheduler
-            List<CronTrigger> schedulers = [
-                SELECT Id, CronJobDetail.Name, State, NextFireTime
-                FROM CronTrigger
-                WHERE CronJobDetail.Name LIKE '%AsyncScheduler%'
-            ];
+            // Check/schedule the Scheduler.
+            // Le watchdog s'appelle "Async Framework Scheduler ..." : l'ancien filtre
+            // '%AsyncScheduler%' ne le trouvait jamais et ne filtrait pas l'etat DELETED.
+            Id liveSchedulerId = AsyncCronJobNames.findLiveJobId(AsyncCronJobNames.WATCHDOG_PREFIX);
             
-            if (schedulers.isEmpty()) {
+            if (liveSchedulerId == null) {
                 try {
                     if (Test.isRunningTest() && simulateScheduleFailure) {
                         throw new AsyncFramework_ForceStartTestException('Simulated for coverage');
                     }
-                    String cronExpression = '0 0 * * * ?';
-                    String jobId = System.schedule('Async Framework Scheduler 01', cronExpression, new AsyncScheduler());
-                    messages.add(String.format(System.Label.Smatch_Force_SchedulerScheduled, new List<String>{ jobId }));
+                    if (!AsyncSchedulerSetup.ensureWatchdogSchedulerPresent()) {
+                        throw new AsyncFramework_ForceStartTestException('Watchdog scheduler could not be created');
+                    }
+                    liveSchedulerId = AsyncCronJobNames.findLiveJobId(AsyncCronJobNames.WATCHDOG_PREFIX);
+                    messages.add(String.format(System.Label.Smatch_Force_SchedulerScheduled, new List<String>{ String.valueOf(liveSchedulerId) }));
                 } catch (Exception e) {
                     messages.add(String.format(System.Label.Smatch_Force_SchedulerError, new List<String>{ e.getMessage() }));
                 }
             } else {
-                messages.add(String.format(System.Label.Smatch_Force_SchedulerActive, new List<String>{ schedulers[0].CronJobDetail.Name, DateTimeFormatUtil.formatInUserTimezone(schedulers[0].NextFireTime) }));
+                CronTrigger liveScheduler = [
+                    SELECT CronJobDetail.Name, NextFireTime
+                    FROM CronTrigger
+                    WHERE Id = :liveSchedulerId
+                    LIMIT 1
+                ];
+                messages.add(String.format(System.Label.Smatch_Force_SchedulerActive, new List<String>{ liveScheduler.CronJobDetail.Name, DateTimeFormatUtil.formatInUserTimezone(liveScheduler.NextFireTime) }));
             }
             
             result.message = String.join(messages, '\n');
@@ -117,14 +123,16 @@ public with sharing class AsyncFramework_ForceStart {
     * @return 
     * @Exception 
     ***/ 
-    public static void ensureWorkerRunning() {
-        if (Test.isRunningTest() && !testAllowEnsureWorkerRunning) return;
-        if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) return;
+    public static Boolean ensureWorkerRunning() {
+        if (Test.isRunningTest() && !testAllowEnsureWorkerRunning) return false;
+        if (Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) return false;
         try {
             System.enqueueJob(new AsyncWorkerQueueable());
             // System.debug('AsyncFramework_ForceStart.ensureWorkerRunning: Worker enqueued.');
+            return true;
         } catch (Exception e) {
             // System.debug('AsyncFramework_ForceStart.ensureWorkerRunning failed: ' + e.getMessage());
+            return false;
         }
     }
 

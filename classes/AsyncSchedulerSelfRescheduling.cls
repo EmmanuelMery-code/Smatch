@@ -8,7 +8,9 @@ public with sharing class AsyncSchedulerSelfRescheduling implements Schedulable 
     @TestVisible private static Boolean simulateEnqueueFailure = false;
     @TestVisible private static Boolean simulateRescheduleFailure = false;
 
-    private static final String JOB_NAME = 'Async Framework Scheduler 01';
+    // Nom regenere a chaque replanification : le cron precedent est un one-shot dont le
+    // CronJobDetail survit, un nom fixe ferait echouer System.schedule et casserait la chaine.
+    private static final String JOB_NAME_PREFIX = AsyncCronJobNames.WATCHDOG_PREFIX;
 
     /*** 
     * @description Executes the scheduler by launching the Watchdog Queueable and rescheduling itself
@@ -28,7 +30,7 @@ public with sharing class AsyncSchedulerSelfRescheduling implements Schedulable 
             DateTime runTime = DateTime.now().addMinutes(freq);
             String cron = '0 ' + runTime.minute() + ' ' + runTime.hour() + ' ' + runTime.day()
                 + ' ' + runTime.month() + ' ? ' + runTime.year();
-            System.schedule(JOB_NAME, cron, new AsyncSchedulerSelfRescheduling());
+            System.schedule(AsyncCronJobNames.uniqueName(JOB_NAME_PREFIX), cron, new AsyncSchedulerSelfRescheduling());
         } catch (Exception ex) {
             // System.debug('AsyncSchedulerSelfRescheduling: Failed to reschedule. ' + ex.getMessage());
         }
