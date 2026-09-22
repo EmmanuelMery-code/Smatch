@@ -195,7 +195,7 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
         List<SF_Async__c> tasksToRun;
         try {
             tasksToRun = [
-                SELECT Id, Name, Task_Class_Name__c, Target_Record_Id__c, 
+                SELECT Id, Name, Task_Class_Name__c, Target_Record_Id__c, Additional_Information__c,
                        Tries__c, Before_Cancelling__c, Scheduled_Time__c
                 FROM SF_Async__c
                 WHERE Executed__c = FALSE 
