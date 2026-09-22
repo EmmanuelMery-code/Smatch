@@ -43,6 +43,8 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
     private static final Integer ENQUEUE_LIMIT_PER_TX = 50;    // Salesforce limit for enqueueJob per transaction
     /** Trial/Dev orgs: max chain depth 5. Cap workers to avoid "Maximum stack depth" AsyncException. */
     private static final Integer CHAIN_DEPTH_SAFE_LIMIT = 4;
+    /** Safety bound when walking Exception.getCause() to classify an error. */
+    private static final Integer CAUSE_CHAIN_MAX_DEPTH = 5;
 
     /** When > 0: this worker is part of a chain, enqueue 1 child with (chainRemaining-1) then process. Avoids Platform Event delay. */
     private final Integer chainSpawnRemaining;
@@ -248,6 +250,10 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
             log.SF_Async__c = taskRecord.Id;
             taskRecord.Tries__c = (taskRecord.Tries__c == null ? 0 : taskRecord.Tries__c) + 1;
 
+            // Set instead of break inside catch: the log, the metrics and the ERROR event of the
+            // failing task must be recorded before leaving the loop, otherwise the failure is silent.
+            Boolean stopAfterThisTask = false;
+
             try {
                 if (taskType == null) {
                     throw new AsyncException('Task class not found: ' + targetClass);
@@ -267,13 +273,11 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
                 if (e instanceof LimitException && e.getMessage() != null && e.getMessage().contains('DML')) {
                     reduceBatchSizeAndPublish(effectiveLimit);
                     reducedBatchSize = true;
-                    break;
-                }
-
-                // Learn from callout/DML ordering errors (e.g. "uncommitted work") - cap this class to 1 task per run
-                if (isCalloutDmlOrderingError(e)) {
+                    stopAfterThisTask = true;
+                } else if (isCalloutDmlOrderingError(e)) {
+                    // Learn from callout/DML ordering errors (e.g. "uncommitted work") - cap this class to 1 task per run
                     learnMaxTasksPerRunForClass(targetClass, 1);
-                    break;  // Next run will use Max_Tasks_Per_Run_Learned__c = 1 for this class
+                    stopAfterThisTask = true;  // Next run will use Max_Tasks_Per_Run_Learned__c = 1 for this class
                 }
 
                 // Publishing event for real-time investigation
@@ -293,6 +297,8 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
 
             logsToInsert.add(log);
             tasksToUpdate.add(taskRecord);
+
+            if (stopAfterThisTask) break;
         }
 
         // Saving with partial error handling (allOrNone=false)
@@ -486,9 +492,34 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
     * @return Boolean True if this is a callout/DML ordering error
     ***/ 
     private static Boolean isCalloutDmlOrderingError(Exception e) {
-        if (e == null || e.getMessage() == null) return false;
+        // Any exception type is accepted, including custom ones: a task often rethrows the platform
+        // error in its own type, with or without setting the cause. Walk the cause chain too.
+        Exception current = e;
+        for (Integer depth = 0; current != null && depth < CAUSE_CHAIN_MAX_DEPTH; depth++) {
+            if (current instanceof CalloutDmlOrderingException || hasOrderingErrorMessage(current)) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    /*** 
+    * @description Matches the ordering symptom itself, whatever the exception type. Phrases are kept
+    *              specific enough that they cannot appear in a class name: a bare 'callout' match
+    *              also catches errors such as "Task class not found: XCalloutTask".
+    * @param e The exception to check
+    * @return Boolean True if the message describes a callout/DML ordering problem
+    ***/ 
+    private static Boolean hasOrderingErrorMessage(Exception e) {
+        if (e.getMessage() == null) return false;
         String msg = e.getMessage().toLowerCase();
-        return (msg.contains('uncommitted work') || msg.contains('commit or rollback') || msg.contains('callout'));
+        return (msg.contains('uncommitted work pending')
+                || msg.contains('commit or rollback')
+                || msg.contains('callout not allowed')
+                || msg.contains('callout loop not allowed')
+                || msg.contains('callout from a batch job')
+                || msg.contains('before calling out'));
     }
 
     /*** 
@@ -517,4 +548,10 @@ public with sharing class AsyncWorkerQueueable implements Queueable, Database.Al
     * @Exception 
     ***/ 
     public class AsyncException extends Exception {}
+
+    /*** 
+    * @description Exception a task can throw (or extend) to declare a callout/DML ordering conflict
+    *              explicitly, whatever its message. The Worker then caps this class to 1 task per run.
+    ***/ 
+    public class CalloutDmlOrderingException extends Exception {}
 }

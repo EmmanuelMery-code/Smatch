@@ -29,11 +29,38 @@ public with sharing class AsyncWorkerQueueableTest {
         }
     }
 
+    /** Task declaring the ordering conflict explicitly, with a message of its own */
+    public class DeclaredOrderingTask implements IAsyncTask {
+        public void run(SF_Async__c c) {
+            throw new AsyncWorkerQueueable.CalloutDmlOrderingException('ERP sync must run alone');
+        }
+    }
+
+    /** Ordering error wrapped by the task in its own exception type - detected via the cause chain */
+    public class WrappedCalloutDmlOrderingTask implements IAsyncTask {
+        public void run(SF_Async__c c) {
+            throw new AsyncWorkerQueueable.AsyncException(
+                'Integration failed',
+                new System.CalloutException('You have uncommitted work pending. Please commit or rollback before calling out')
+            );
+        }
+    }
+
+    /** Business failure in a class whose name contains "Callout" - must still be logged */
+    public class AccountCalloutTask implements IAsyncTask {
+        public void run(SF_Async__c c) {
+            throw new AsyncWorkerQueueable.AsyncException('AccountCalloutTask: target record is missing');
+        }
+    }
+
     @TestSetup
     static void makeData() {
         delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.FailingTask'];
+        delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.AccountCalloutTask'];
         delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.CalloutDmlOrderingTask'];
         delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.CalloutDmlOrderingTaskLearnFail'];
+        delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.WrappedCalloutDmlOrderingTask'];
+        delete [SELECT Id FROM SF_Async_Performance__c WHERE Name = 'AsyncWorkerQueueableTest.DeclaredOrderingTask'];
     }
 
     @isTest
@@ -78,6 +105,76 @@ public with sharing class AsyncWorkerQueueableTest {
 
         AsyncWorkerQueueable.testSimulateLearnFail = false;
         Assert.isTrue(true, 'Learn catch path should complete');
+    }
+
+    @isTest
+    static void testWorker_ClassNamedCalloutStillLogsError() {
+        SF_Async__c task = new SF_Async__c(
+            Task_Class_Name__c = 'AsyncWorkerQueueableTest.AccountCalloutTask',
+            Scheduled_Time__c = System.now().addHours(-1)
+        );
+        insert task;
+
+        Test.startTest();
+        System.enqueueJob(new AsyncWorkerQueueable());
+        Test.stopTest();
+
+        List<SF_Async_Log__c> logs = [SELECT Status__c FROM SF_Async_Log__c WHERE SF_Async__c = :task.Id];
+        Assert.isTrue(!logs.isEmpty(), 'A class named *Callout* must still produce an error log');
+        Assert.areEqual('Error', logs[0].Status__c);
+
+        SF_Async__c reloaded = [SELECT Tries__c, Executed__c FROM SF_Async__c WHERE Id = :task.Id];
+        Assert.areEqual(1, reloaded.Tries__c, 'Tries must be incremented and saved');
+        Assert.isFalse(reloaded.Executed__c);
+
+        List<SF_Async_Performance__c> perfs = [
+            SELECT Max_Tasks_Per_Run_Learned__c FROM SF_Async_Performance__c
+            WHERE Name = 'AsyncWorkerQueueableTest.AccountCalloutTask'
+        ];
+        Assert.isTrue(perfs.isEmpty(), 'A business error must not be learned as a callout/DML ordering error');
+    }
+
+    @isTest
+    static void testWorker_DeclaredOrderingException() {
+        SF_Async__c task = new SF_Async__c(
+            Task_Class_Name__c = 'AsyncWorkerQueueableTest.DeclaredOrderingTask',
+            Scheduled_Time__c = System.now().addHours(-1)
+        );
+        insert task;
+
+        Test.startTest();
+        System.enqueueJob(new AsyncWorkerQueueable());
+        Test.stopTest();
+
+        List<SF_Async_Performance__c> perfs = [
+            SELECT Max_Tasks_Per_Run_Learned__c FROM SF_Async_Performance__c
+            WHERE Name = 'AsyncWorkerQueueableTest.DeclaredOrderingTask'
+        ];
+        Assert.isTrue(!perfs.isEmpty(), 'CalloutDmlOrderingException should be detected whatever its message');
+        Assert.areEqual(1, perfs[0].Max_Tasks_Per_Run_Learned__c);
+
+        List<SF_Async_Log__c> logs = [SELECT Status__c FROM SF_Async_Log__c WHERE SF_Async__c = :task.Id];
+        Assert.areEqual('Error', logs[0].Status__c, 'The failure must still be logged');
+    }
+
+    @isTest
+    static void testWorker_WrappedCalloutDmlOrderingError() {
+        SF_Async__c task = new SF_Async__c(
+            Task_Class_Name__c = 'AsyncWorkerQueueableTest.WrappedCalloutDmlOrderingTask',
+            Scheduled_Time__c = System.now().addHours(-1)
+        );
+        insert task;
+
+        Test.startTest();
+        System.enqueueJob(new AsyncWorkerQueueable());
+        Test.stopTest();
+
+        List<SF_Async_Performance__c> perfs = [
+            SELECT Max_Tasks_Per_Run_Learned__c FROM SF_Async_Performance__c
+            WHERE Name = 'AsyncWorkerQueueableTest.WrappedCalloutDmlOrderingTask'
+        ];
+        Assert.isTrue(!perfs.isEmpty(), 'Ordering error wrapped in a custom exception should be detected via the cause');
+        Assert.areEqual(1, perfs[0].Max_Tasks_Per_Run_Learned__c);
     }
 
     @isTest
